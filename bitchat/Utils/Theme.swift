@@ -82,15 +82,16 @@ struct ThemePalette {
     let divider: Color
 
     static func matrix(_ colorScheme: ColorScheme) -> ThemePalette {
+        // Monochrome: black base with white/grey text, no hue. Light mode inverts.
         let isDark = colorScheme == .dark
-        let green = isDark ? Color.green : Color(red: 0, green: 0.5, blue: 0)
+        let ink = isDark ? Color(white: 0.92) : Color(white: 0.08)
         return ThemePalette(
             background: isDark ? Color.black : Color.white,
-            primary: green,
-            secondary: green.opacity(0.8),
-            accent: green,
-            locationAccent: green,
-            accentBlue: Color(red: 0.0, green: 0.478, blue: 1.0),
+            primary: ink,
+            secondary: isDark ? Color(white: 0.55) : Color(white: 0.40),
+            accent: ink,
+            locationAccent: isDark ? Color(white: 0.75) : Color(white: 0.25),
+            accentBlue: isDark ? Color(white: 0.80) : Color(white: 0.20),
             alertRed: Color(red: 0.75, green: 0.1, blue: 0.1),
             divider: isDark ? Color.white.opacity(0.12) : Color.black.opacity(0.08)
         )
