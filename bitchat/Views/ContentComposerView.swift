@@ -167,7 +167,7 @@ private extension ContentComposerView {
         Button(action: { bridgeService.nearbyOnly.toggle() }) {
             Image(systemName: bridgeService.nearbyOnly ? "antenna.radiowaves.left.and.right" : "network")
                 .font(.bitchatSystem(size: 16))
-                .foregroundColor(bridgeService.nearbyOnly ? palette.secondary : Color.cyan.opacity(0.9))
+                .foregroundColor(bridgeService.nearbyOnly ? palette.secondary : palette.primary)
                 .frame(width: 28, height: 28)
                 .contentShape(Rectangle())
         }
@@ -253,7 +253,7 @@ private extension ContentComposerView {
     }
 
     var composerAccentColor: Color {
-        privateConversationModel.selectedPeerID != nil ? Color.orange : palette.accent
+        privateConversationModel.selectedPeerID != nil ? palette.primary : palette.accent
     }
 
     var attachmentButton: some View {
