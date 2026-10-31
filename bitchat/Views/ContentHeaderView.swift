@@ -167,7 +167,7 @@ struct ContentHeaderView: View {
                     Button(action: { appChromeModel.openMostRelevantPrivateChat() }) {
                         Image(systemName: "envelope.fill")
                             .font(.bitchatSystem(size: 12))
-                            .foregroundColor(Color.orange)
+                            .foregroundColor(palette.primary)
                             .headerTapTarget()
                     }
                     .buttonStyle(.plain)
@@ -190,7 +190,7 @@ struct ContentHeaderView: View {
                         .font(.bitchatSystem(size: 12))
                         .foregroundColor(
                             scopeHasNotices || unseenNoticesCount > 0
-                                ? Color.orange.opacity(0.8)
+                                ? palette.primary
                                 : palette.secondary.opacity(0.9)
                         )
                         .headerTapTarget()
@@ -463,8 +463,7 @@ private extension ContentHeaderView {
             let count = peerListModel.visibleGeohashPeerCount
             return (count, count > 0 ? palette.locationAccent : palette.secondary)
         case .mesh:
-            let meshBlue = Color(hue: 0.60, saturation: 0.85, brightness: 0.82)
-            let color: Color = peerListModel.connectedMeshPeerCount > 0 ? meshBlue : palette.secondary
+            let color: Color = peerListModel.connectedMeshPeerCount > 0 ? palette.accentBlue : palette.secondary
             return (peerListModel.reachableMeshPeerCount, color)
         }
     }
