@@ -153,14 +153,19 @@ struct ThemedPalette: DynamicProperty {
 // MARK: - Themed view helpers
 
 /// Themed replacement for `.font(.bitchatSystem(size:weight:design: .monospaced))`:
-/// monospaced under matrix, system default under liquid glass.
+/// Departure Mono (with a system-monospace fallback) under matrix, system
+/// default under liquid glass.
 private struct ThemedFontModifier: ViewModifier {
     @Environment(\.appTheme) private var theme
     let size: CGFloat
     let weight: Font.Weight
 
     func body(content: Content) -> some View {
-        content.font(.bitchatSystem(size: size, weight: weight, design: theme.bodyFontDesign))
+        if theme == .matrix {
+            content.font(.bitchatMatrix(size: size, weight: weight))
+        } else {
+            content.font(.bitchatSystem(size: size, weight: weight, design: theme.bodyFontDesign))
+        }
     }
 }
 
