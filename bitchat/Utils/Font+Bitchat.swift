@@ -11,6 +11,42 @@ extension Font {
         }
         return font
     }
+
+    /// Matrix theme face: Departure Mono (bundled under the SIL OFL in
+    /// `bitchat/Fonts/`) when it registered at launch, falling back to the
+    /// system monospace so a missing or unregistered asset can never break
+    /// text rendering. Departure Mono ships in one weight; a non-regular
+    /// `weight` is applied the way SwiftUI treats any single-weight custom
+    /// font.
+    static func bitchatMatrix(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        guard DepartureMonoFont.isAvailable else {
+            return bitchatSystem(size: size, weight: weight, design: .monospaced)
+        }
+        var font = Font.custom(
+            DepartureMonoFont.postScriptName,
+            size: size,
+            relativeTo: .bitchatPreferredStyle(for: size)
+        )
+        if weight != .regular {
+            font = font.weight(weight)
+        }
+        return font
+    }
+}
+
+/// Runtime probe for the bundled Departure Mono face. The font registers via
+/// UIAppFonts (iOS) and ATSApplicationFontsPath (macOS); nothing in the app may
+/// assume it exists.
+private enum DepartureMonoFont {
+    static let postScriptName = "DepartureMono-Regular"
+
+    static let isAvailable: Bool = {
+        #if os(iOS)
+        return UIFont(name: postScriptName, size: 12) != nil
+        #else
+        return NSFont(name: postScriptName, size: 12) != nil
+        #endif
+    }()
 }
 
 private extension Font.TextStyle {
