@@ -4,6 +4,8 @@
 <dict>
 	<key>AppGroupID</key>
 	<string>$(APP_GROUP_ID)</string>
+	<key>ATSApplicationFontsPath</key>
+	<string>Fonts</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -47,6 +49,10 @@
 	<string>bitchat uses the microphone while you record voice notes or hold live push-to-talk, then sends that audio to your selected mesh conversation.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>bitchat lets you pick images from your photo library to share with nearby peers.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Fonts/DepartureMono-Regular.otf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
