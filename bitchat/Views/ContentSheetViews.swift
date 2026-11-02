@@ -528,7 +528,7 @@ private struct ContentPrivateChatSheetView: View {
                             }) {
                                 Image(systemName: headerState.isFavorite ? "star.fill" : "star")
                                     .font(.bitchatSystem(size: 14))
-                                    .foregroundColor(headerState.isFavorite ? Color.yellow : palette.primary)
+                                    .foregroundColor(headerState.isFavorite ? palette.statusFavorite : palette.primary)
                                     // Same visual box + 44pt hit target as SheetCloseButton.
                                     .frame(width: 32, height: 32)
                                     .contentShape(Rectangle().inset(by: -6))
@@ -639,7 +639,7 @@ private struct ContentPrivateChatSheetView: View {
             Text(verbatim: privacyCaptionText)
                 .bitchatFont(size: 11, weight: .medium)
         }
-        .foregroundColor(Color.orange)
+        .foregroundColor(palette.statusWarning)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 4)
         // The orange text is signature enough; a tinted band here reads as a
@@ -691,7 +691,7 @@ private struct PrivateHeaderChrome: ViewModifier {
             // Orange tint before themedSurface so it layers in front of the
             // opaque themed background rather than behind it.
             content
-                .background(Color.orange.opacity(0.06))
+                .background(palette.statusWarning.opacity(0.06))
                 .themedSurface()
         }
     }
@@ -766,7 +766,7 @@ private struct ContentPrivateHeaderInfoButton: View {
                         .foregroundColor(
                             encryptionStatus == .noiseVerified || encryptionStatus == .noiseSecured
                             ? palette.primary
-                            : Color.red
+                            : palette.alertRed
                         )
                         .accessibilityLabel(
                             String(
