@@ -29,10 +29,12 @@ struct PulsingOpacityModifier: ViewModifier {
 /// The red pulsing "LIVE" chip shown on a voice bubble while its burst is
 /// still streaming in.
 struct LiveVoiceBadge: View {
+    @ThemedPalette private var palette
+
     var body: some View {
         HStack(spacing: 4) {
             Circle()
-                .fill(Color.red)
+                .fill(palette.alertRed)
                 .frame(width: 6, height: 6)
             Text("media.voice.live_badge", comment: "Badge on a voice message that is currently streaming in live")
                 .bitchatFont(size: 10, weight: .bold)
@@ -41,7 +43,7 @@ struct LiveVoiceBadge: View {
         .padding(.horizontal, 6)
         .padding(.vertical, 3)
         .background(
-            Capsule().fill(Color.red.opacity(0.15))
+            Capsule().fill(palette.alertRed.opacity(0.15))
         )
         .modifier(PulsingOpacityModifier(active: true))
         .accessibilityLabel(
