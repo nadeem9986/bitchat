@@ -37,6 +37,21 @@ final class ChatMessageFormatter {
             : .bitchatSystem(size: size, weight: weight, design: theme.bodyFontDesign)
     }
 
+    /// "That's you" marker color for the active theme. Matrix is strictly
+    /// monochrome, so your own messages and mentions of you read as the
+    /// brightest ink; liquid glass keeps the classic orange.
+    private func selfColor(theme: AppTheme, isDark: Bool) -> Color {
+        guard theme == .matrix else { return .orange }
+        return isDark ? Color(white: 0.95) : Color(white: 0.05)
+    }
+
+    /// Link color for the active theme. Matrix swaps web-blue for the grey
+    /// informational accent; the underline still carries the tap signal.
+    private func linkColor(theme: AppTheme, isDark: Bool) -> Color {
+        guard theme == .matrix else { return .blue }
+        return isDark ? Color(white: 0.80) : Color(white: 0.20)
+    }
+
     func formatMessageAsText(_ message: BitchatMessage, colorScheme: ColorScheme, theme: AppTheme = .matrix) -> AttributedString {
         let isSelf: Bool = {
             if let spid = message.senderPeerID {
@@ -70,7 +85,7 @@ final class ChatMessageFormatter {
         }
 
         var result = AttributedString()
-        let baseColor: Color = isSelf ? .orange : peerColor(for: message, isDark: isDark)
+        let baseColor: Color = isSelf ? selfColor(theme: theme, isDark: isDark) : peerColor(for: message, isDark: isDark)
 
         if message.sender != "system" {
             let (baseName, suffix) = message.sender.splitSuffix()
@@ -260,7 +275,7 @@ final class ChatMessageFormatter {
                             weight: isSelf ? .bold : .semibold,
                             theme: theme
                         )
-                        let mentionColor: Color = isMentionToMe ? .orange : baseColor
+                        let mentionColor: Color = isMentionToMe ? selfColor(theme: theme, isDark: isDark) : baseColor
                         mentionStyle.foregroundColor = mentionColor
                         let at = "@"
                         result.append(AttributedString("\(at)").mergingAttributes(mentionStyle))
@@ -319,7 +334,7 @@ final class ChatMessageFormatter {
                             theme: theme
                         )
                         if type == "url" {
-                            matchStyle.foregroundColor = isSelf ? .orange : .blue
+                            matchStyle.foregroundColor = isSelf ? baseColor : linkColor(theme: theme, isDark: isDark)
                             matchStyle.underlineStyle = .single
                             if let url = URL(string: matchText) {
                                 matchStyle.link = url
@@ -397,7 +412,7 @@ final class ChatMessageFormatter {
             return cachedHeader
         }
 
-        let baseColor: Color = isSelf ? .orange : peerColor(for: message, isDark: isDark)
+        let baseColor: Color = isSelf ? selfColor(theme: theme, isDark: isDark) : peerColor(for: message, isDark: isDark)
 
         if message.sender == "system" {
             var style = AttributeContainer()
