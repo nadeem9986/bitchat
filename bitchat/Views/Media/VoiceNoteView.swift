@@ -84,7 +84,7 @@ struct VoiceNoteView: View {
                     Image(systemName: "xmark")
                         .font(.bitchatSystem(size: 12, weight: .bold))
                         .frame(width: 28, height: 28)
-                        .background(Circle().fill(Color.red.opacity(0.9)))
+                        .background(Circle().fill(palette.alertRed.opacity(0.9)))
                         .foregroundColor(.white)
                 }
                 .buttonStyle(.plain)
