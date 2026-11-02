@@ -44,14 +44,14 @@ struct TextMessageView: View {
                 if message.isPrivate {
                     Image(systemName: "lock.fill")
                         .font(.bitchatSystem(size: 8))
-                        .foregroundColor(Color.orange.opacity(0.75))
+                        .foregroundColor(palette.statusWarning.opacity(0.75))
                         .padding(.trailing, 4)
                         .accessibilityHidden(true)
                 }
                 if conversationUIModel.showsVerifiedSeal(for: message) {
                     Image(systemName: "checkmark.seal.fill")
                         .font(.bitchatSystem(size: 8))
-                        .foregroundColor(Color.green.opacity(0.85))
+                        .foregroundColor(palette.statusSuccess.opacity(0.85))
                         .padding(.trailing, 4)
                         .accessibilityLabel(
                             String(localized: "content.accessibility.verified_sender", defaultValue: "Verified sender", comment: "Accessibility label for the seal next to a verified peer's name on a private message")
@@ -60,7 +60,7 @@ struct TextMessageView: View {
                 if message.isBridged {
                     Image(systemName: "network")
                         .font(.bitchatSystem(size: 8))
-                        .foregroundColor(Color.cyan.opacity(0.75))
+                        .foregroundColor(palette.statusInfo.opacity(0.75))
                         .padding(.trailing, 4)
                         .accessibilityLabel(
                             String(localized: "content.accessibility.bridged_message", defaultValue: "Arrived across a mesh bridge", comment: "Accessibility label for the glyph marking a message that arrived across a mesh bridge")
@@ -97,7 +97,7 @@ struct TextMessageView: View {
                 if case .failed = deliveryStatus {
                     Text(verbatim: deliveryStatus.bitchatDescription)
                         .bitchatFont(size: 11)
-                        .foregroundColor(Color.red.opacity(0.9))
+                        .foregroundColor(palette.alertRed.opacity(0.9))
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 2)
                 } else if showDeliveryDetail {
