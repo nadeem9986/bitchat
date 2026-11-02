@@ -84,7 +84,7 @@ struct FingerprintView: View {
                     if let icon = fingerprintState.encryptionStatus.icon {
                         Image(systemName: icon)
                             .font(.bitchatSystem(size: 20))
-                            .foregroundColor(fingerprintState.encryptionStatus == .noiseVerified ? Color.green : textColor)
+                            .foregroundColor(fingerprintState.encryptionStatus == .noiseVerified ? palette.statusSuccess : textColor)
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
@@ -153,7 +153,7 @@ struct FingerprintView: View {
                     } else {
                         Text(Strings.handshakePending)
                             .bitchatFont(size: 14)
-                            .foregroundColor(Color.orange)
+                            .foregroundColor(palette.statusWarning)
                             .padding()
                     }
                 }
@@ -226,7 +226,7 @@ struct FingerprintView: View {
                     VStack(spacing: 12) {
                         Text(fingerprintState.isVerified ? Strings.verifiedBadge : Strings.notVerifiedBadge)
                             .bitchatFont(size: 14, weight: .bold)
-                            .foregroundColor(fingerprintState.isVerified ? Color.green : Color.orange)
+                            .foregroundColor(fingerprintState.isVerified ? palette.statusSuccess : palette.statusWarning)
                             .frame(maxWidth: .infinity)
                         
                         Group {
