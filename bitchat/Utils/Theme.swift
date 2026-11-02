@@ -78,6 +78,14 @@ struct ThemePalette {
     let accentBlue: Color
     /// Destructive/error accent.
     let alertRed: Color
+    /// Positive status (delivered, verified, secured).
+    let statusSuccess: Color
+    /// Caution status (pending, unverified, private-channel notices).
+    let statusWarning: Color
+    /// Informational status (bridged/relayed message glyphs).
+    let statusInfo: Color
+    /// Favorite/star marker.
+    let statusFavorite: Color
     /// Hairline separators.
     let divider: Color
 
@@ -93,6 +101,10 @@ struct ThemePalette {
             locationAccent: isDark ? Color(white: 0.75) : Color(white: 0.25),
             accentBlue: isDark ? Color(white: 0.80) : Color(white: 0.20),
             alertRed: Color(red: 0.75, green: 0.1, blue: 0.1),
+            statusSuccess: isDark ? Color(white: 0.85) : Color(white: 0.15),
+            statusWarning: isDark ? Color(white: 0.60) : Color(white: 0.40),
+            statusInfo: isDark ? Color(white: 0.80) : Color(white: 0.20),
+            statusFavorite: isDark ? Color(white: 0.95) : Color(white: 0.05),
             divider: isDark ? Color.white.opacity(0.12) : Color.black.opacity(0.08)
         )
     }
@@ -106,6 +118,10 @@ struct ThemePalette {
             locationAccent: .green,
             accentBlue: .blue,
             alertRed: .red,
+            statusSuccess: .green,
+            statusWarning: .orange,
+            statusInfo: .cyan,
+            statusFavorite: .yellow,
             divider: separator
         )
     }
