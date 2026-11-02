@@ -36,7 +36,7 @@ struct PanicWipeBlockedBanner: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .background(Color.red.opacity(0.12))
+        .background(palette.alertRed.opacity(0.12))
         .accessibilityElement(children: .combine)
     }
 }
