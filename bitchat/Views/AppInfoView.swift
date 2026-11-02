@@ -173,7 +173,7 @@ struct AppInfoView: View {
                 ("antenna.radiowaves.left.and.right", nil, String(localized: "app_info.legend.mesh_connected")),
                 ("point.3.filled.connected.trianglepath.dotted", nil, String(localized: "app_info.legend.mesh_relayed")),
                 ("globe", nil, String(localized: "app_info.legend.nostr")),
-                ("network", Color.cyan, String(localized: "app_info.legend.bridged", defaultValue: "message arrived across a mesh bridge", comment: "Symbols legend entry for the cyan network glyph shown on messages carried across a mesh bridge")),
+                ("network", nil, String(localized: "app_info.legend.bridged", defaultValue: "message arrived across a mesh bridge", comment: "Symbols legend entry for the cyan network glyph shown on messages carried across a mesh bridge")),
                 ("person", nil, String(localized: "app_info.legend.offline")),
                 ("mappin.and.ellipse", nil, String(localized: "app_info.legend.location_nearby")),
                 ("face.dashed", nil, String(localized: "app_info.legend.teleported")),
@@ -495,7 +495,7 @@ struct AppInfoView: View {
                             .foregroundColor(palette.alertRed)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 6)
-                            .background(Color.red.opacity(0.08))
+                            .background(palette.alertRed.opacity(0.08))
                             .cornerRadius(6)
                     }
                     .buttonStyle(.plain)
@@ -554,7 +554,7 @@ struct AppInfoView: View {
                             .foregroundColor(palette.alertRed)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 6)
-                            .background(Color.red.opacity(0.08))
+                            .background(palette.alertRed.opacity(0.08))
                             .cornerRadius(6)
                     }
                     .buttonStyle(.plain)
@@ -825,7 +825,7 @@ struct AppInfoView: View {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: item.icon)
                             .font(.bitchatSystem(size: 14))
-                            .foregroundColor(item.color ?? textColor)
+                            .foregroundColor(item.icon == "network" ? palette.statusInfo : (item.color ?? textColor))
                             .frame(width: 30)
 
                         Text(item.text)
