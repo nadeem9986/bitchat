@@ -28,8 +28,16 @@ final class ChatMessageFormatter {
         self.viewModel = viewModel
     }
 
+    /// Message text face for the active theme: Departure Mono under matrix
+    /// (with a system-monospace fallback if the bundled font fails to
+    /// register), the system face under liquid glass.
+    private func messageFont(size: CGFloat, weight: Font.Weight = .regular, theme: AppTheme) -> Font {
+        theme == .matrix
+            ? .bitchatMatrix(size: size, weight: weight)
+            : .bitchatSystem(size: size, weight: weight, design: theme.bodyFontDesign)
+    }
+
     func formatMessageAsText(_ message: BitchatMessage, colorScheme: ColorScheme, theme: AppTheme = .matrix) -> AttributedString {
-        let design = theme.bodyFontDesign
         let isSelf: Bool = {
             if let spid = message.senderPeerID {
                 if case .location(let channel) = viewModel.activeChannel, spid.isGeoChat {
@@ -69,7 +77,7 @@ final class ChatMessageFormatter {
             var senderStyle = AttributeContainer()
             senderStyle.foregroundColor = baseColor
             let fontWeight: Font.Weight = isSelf ? .bold : .medium
-            senderStyle.font = .bitchatSystem(size: 14, weight: fontWeight, design: design)
+            senderStyle.font = messageFont(size: 14, weight: fontWeight, theme: theme)
             if let spid = message.senderPeerID,
                let url = URL(string: "bitchat://user/\(spid.toPercentEncoded())") {
                 senderStyle.link = url
@@ -86,7 +94,7 @@ final class ChatMessageFormatter {
             // (TextMessageView / MediaMessageView); skip the in-string ✓ there
             // so verified DMs don't show two markers.
             if isVerifiedSender, !message.isPrivate {
-                appendVerifiedSeal(to: &result, baseColor: baseColor, design: design)
+                appendVerifiedSeal(to: &result, baseColor: baseColor, theme: theme)
             }
             result.append(AttributedString("> ").mergingAttributes(senderStyle))
 
@@ -98,8 +106,8 @@ final class ChatMessageFormatter {
                 var plainStyle = AttributeContainer()
                 plainStyle.foregroundColor = baseColor
                 plainStyle.font = isSelf
-                    ? .bitchatSystem(size: 14, weight: .bold, design: design)
-                    : .bitchatSystem(size: 14, design: design)
+                    ? messageFont(size: 14, weight: .bold, theme: theme)
+                    : messageFont(size: 14, theme: theme)
                 result.append(AttributedString(content).mergingAttributes(plainStyle))
             } else {
                 let hashtagRegex = Patterns.hashtag
@@ -217,8 +225,8 @@ final class ChatMessageFormatter {
                             var beforeStyle = AttributeContainer()
                             beforeStyle.foregroundColor = baseColor
                             beforeStyle.font = isSelf
-                                ? .bitchatSystem(size: 14, weight: .bold, design: design)
-                                : .bitchatSystem(size: 14, design: design)
+                                ? messageFont(size: 14, weight: .bold, theme: theme)
+                                : messageFont(size: 14, theme: theme)
                             if isMentioned {
                                 beforeStyle.font = beforeStyle.font?.bold()
                             }
@@ -247,10 +255,10 @@ final class ChatMessageFormatter {
                         }()
 
                         var mentionStyle = AttributeContainer()
-                        mentionStyle.font = .bitchatSystem(
+                        mentionStyle.font = messageFont(
                             size: 14,
                             weight: isSelf ? .bold : .semibold,
-                            design: design
+                            theme: theme
                         )
                         let mentionColor: Color = isMentionToMe ? .orange : baseColor
                         mentionStyle.foregroundColor = mentionColor
@@ -287,8 +295,8 @@ final class ChatMessageFormatter {
 
                         var tagStyle = AttributeContainer()
                         tagStyle.font = isSelf
-                            ? .bitchatSystem(size: 14, weight: .bold, design: design)
-                            : .bitchatSystem(size: 14, design: design)
+                            ? messageFont(size: 14, weight: .bold, theme: theme)
+                            : messageFont(size: 14, theme: theme)
                         tagStyle.foregroundColor = baseColor
                         if isGeohash && !attachedToMentionToken && standalone,
                            let url = URL(string: "bitchat://geohash/\(token)") {
@@ -300,15 +308,15 @@ final class ChatMessageFormatter {
                         var spacer = AttributeContainer()
                         spacer.foregroundColor = baseColor
                         spacer.font = isSelf
-                            ? .bitchatSystem(size: 14, weight: .bold, design: design)
-                            : .bitchatSystem(size: 14, design: design)
+                            ? messageFont(size: 14, weight: .bold, theme: theme)
+                            : messageFont(size: 14, theme: theme)
                         result.append(AttributedString(" ").mergingAttributes(spacer))
                     } else {
                         var matchStyle = AttributeContainer()
-                        matchStyle.font = .bitchatSystem(
+                        matchStyle.font = messageFont(
                             size: 14,
                             weight: isSelf ? .bold : .semibold,
-                            design: design
+                            theme: theme
                         )
                         if type == "url" {
                             matchStyle.foregroundColor = isSelf ? .orange : .blue
@@ -330,8 +338,8 @@ final class ChatMessageFormatter {
                     var remainingStyle = AttributeContainer()
                     remainingStyle.foregroundColor = baseColor
                     remainingStyle.font = isSelf
-                        ? .bitchatSystem(size: 14, weight: .bold, design: design)
-                        : .bitchatSystem(size: 14, design: design)
+                        ? messageFont(size: 14, weight: .bold, theme: theme)
+                        : messageFont(size: 14, theme: theme)
                     if isMentioned {
                         remainingStyle.font = remainingStyle.font?.bold()
                     }
@@ -342,19 +350,19 @@ final class ChatMessageFormatter {
             let timestamp = AttributedString(" [\(message.formattedTimestamp)]")
             var timestampStyle = AttributeContainer()
             timestampStyle.foregroundColor = Color.gray.opacity(0.7)
-            timestampStyle.font = .bitchatSystem(size: 10, design: design)
+            timestampStyle.font = messageFont(size: 10, theme: theme)
             result.append(timestamp.mergingAttributes(timestampStyle))
         } else {
             var contentStyle = AttributeContainer()
             contentStyle.foregroundColor = Color.gray
             let content = AttributedString("* \(message.content) *")
-            contentStyle.font = .bitchatSystem(size: 12, design: design).italic()
+            contentStyle.font = messageFont(size: 12, theme: theme).italic()
             result.append(content.mergingAttributes(contentStyle))
 
             let timestamp = AttributedString(" [\(message.formattedTimestamp)]")
             var timestampStyle = AttributeContainer()
             timestampStyle.foregroundColor = Color.gray.opacity(0.5)
-            timestampStyle.font = .bitchatSystem(size: 10, design: design)
+            timestampStyle.font = messageFont(size: 10, theme: theme)
             result.append(timestamp.mergingAttributes(timestampStyle))
         }
 
@@ -367,7 +375,6 @@ final class ChatMessageFormatter {
     static let headerCacheNamespace = "hdr:"
 
     func formatMessageHeader(_ message: BitchatMessage, colorScheme: ColorScheme, theme: AppTheme = .matrix) -> AttributedString {
-        let design = theme.bodyFontDesign
         let isSelf: Bool = {
             if let spid = message.senderPeerID {
                 if case .location(let channel) = viewModel.activeChannel, spid.id.hasPrefix("nostr:"),
@@ -395,7 +402,7 @@ final class ChatMessageFormatter {
         if message.sender == "system" {
             var style = AttributeContainer()
             style.foregroundColor = baseColor
-            style.font = .bitchatSystem(size: 14, weight: .medium, design: design)
+            style.font = messageFont(size: 14, weight: .medium, theme: theme)
             let header = AttributedString(message.sender).mergingAttributes(style)
             message.setCachedFormattedText(header, isDark: isDark, isSelf: isSelf, variant: cacheVariant)
             return header
@@ -405,7 +412,7 @@ final class ChatMessageFormatter {
         let (baseName, suffix) = message.sender.splitSuffix()
         var senderStyle = AttributeContainer()
         senderStyle.foregroundColor = baseColor
-        senderStyle.font = .bitchatSystem(size: 14, weight: isSelf ? .bold : .medium, design: design)
+        senderStyle.font = messageFont(size: 14, weight: isSelf ? .bold : .medium, theme: theme)
         if let spid = message.senderPeerID,
            let url = URL(string: "bitchat://user/\(spid.id.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? spid.id)") {
             senderStyle.link = url
@@ -419,7 +426,7 @@ final class ChatMessageFormatter {
             result.append(AttributedString(suffix).mergingAttributes(suffixStyle))
         }
         if isVerifiedSender, !message.isPrivate {
-            appendVerifiedSeal(to: &result, baseColor: baseColor, design: design)
+            appendVerifiedSeal(to: &result, baseColor: baseColor, theme: theme)
         }
         result.append(AttributedString("> ").mergingAttributes(senderStyle))
         message.setCachedFormattedText(result, isDark: isDark, isSelf: isSelf, variant: cacheVariant)
@@ -482,12 +489,12 @@ private extension ChatMessageFormatter {
     func appendVerifiedSeal(
         to result: inout AttributedString,
         baseColor: Color,
-        design: Font.Design
+        theme: AppTheme
     ) {
         var sealStyle = AttributeContainer()
         // Match the peer-list verified seal: filled checkmark in the sender tint.
         sealStyle.foregroundColor = baseColor
-        sealStyle.font = .bitchatSystem(size: 11, weight: .semibold, design: design)
+        sealStyle.font = messageFont(size: 11, weight: .semibold, theme: theme)
         result.append(AttributedString(" ✓").mergingAttributes(sealStyle))
     }
 
