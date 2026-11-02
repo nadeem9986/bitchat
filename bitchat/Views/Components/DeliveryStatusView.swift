@@ -118,7 +118,7 @@ struct DeliveryStatusView: View {
         case .failed:
             Image(systemName: "exclamationmark.triangle")
                 .font(.bitchatSystem(size: 10))
-                .foregroundColor(Color.red.opacity(0.8))
+                .foregroundColor(palette.alertRed.opacity(0.8))
 
         case .partiallyDelivered(let reached, let total):
             HStack(spacing: 1) {
