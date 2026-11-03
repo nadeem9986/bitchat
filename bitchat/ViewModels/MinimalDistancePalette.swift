@@ -21,6 +21,10 @@ final class MinimalDistancePalette {
         let ringBrightnessDeltaDark: Double
         let preferredBiasWeight: Double
         let goldenStep: Int
+        /// Monochrome palettes drop hue entirely: slots spread across
+        /// brightness steps instead, so peers stay distinguishable as
+        /// distinct greys.
+        let monochrome: Bool
 
         init(
             slotCount: Int,
@@ -33,7 +37,8 @@ final class MinimalDistancePalette {
             ringBrightnessDeltaLight: Double,
             ringBrightnessDeltaDark: Double,
             preferredBiasWeight: Double = 0.05,
-            goldenStep: Int = 7
+            goldenStep: Int = 7,
+            monochrome: Bool = false
         ) {
             self.slotCount = slotCount
             self.avoidCenterHue = avoidCenterHue
@@ -46,6 +51,7 @@ final class MinimalDistancePalette {
             self.ringBrightnessDeltaDark = ringBrightnessDeltaDark
             self.preferredBiasWeight = preferredBiasWeight
             self.goldenStep = goldenStep
+            self.monochrome = monochrome
         }
     }
 
@@ -75,6 +81,16 @@ final class MinimalDistancePalette {
     @MainActor
     func color(for identifier: String, isDark: Bool) -> Color? {
         guard let entry = entries[identifier] else { return nil }
+        if config.monochrome {
+            // Slot picks the brightness step, ring nudges it darker. Ranges
+            // keep every grey readable against the theme's flat background.
+            let steps = max(1, config.slotCount - 1)
+            let hi = isDark ? 0.88 : 0.42
+            let lo = isDark ? 0.45 : 0.06
+            var brightness = hi - (hi - lo) * (Double(entry.slot) / Double(steps))
+            brightness = min(1.0, max(0.0, brightness - Double(entry.ring) * 0.07))
+            return Color(white: brightness)
+        }
         let saturation = isDark ? config.saturationDark : config.saturationLight
         let baseBrightness = isDark ? config.baseBrightnessDark : config.baseBrightnessLight
         let ringDelta = isDark ? config.ringBrightnessDeltaDark : config.ringBrightnessDeltaLight
@@ -188,6 +204,21 @@ extension MinimalDistancePalette.Config {
         ringBrightnessDeltaLight: TransportConfig.uiPeerPaletteRingBrightnessDeltaLight,
         ringBrightnessDeltaDark: TransportConfig.uiPeerPaletteRingBrightnessDeltaDark
     )
+
+    static let meshMonochrome = MinimalDistancePalette.Config(
+        slotCount: TransportConfig.uiPeerPaletteSlots,
+        avoidCenterHue: 30.0 / 360.0,
+        avoidHueDelta: TransportConfig.uiColorHueAvoidanceDelta,
+        saturationLight: 0.70,
+        saturationDark: 0.80,
+        baseBrightnessLight: 0.45,
+        baseBrightnessDark: 0.75,
+        ringBrightnessDeltaLight: TransportConfig.uiPeerPaletteRingBrightnessDeltaLight,
+        ringBrightnessDeltaDark: TransportConfig.uiPeerPaletteRingBrightnessDeltaDark,
+        monochrome: true
+    )
+
+    static let nostrMonochrome = meshMonochrome
 
     static let nostr = MinimalDistancePalette.Config(
         slotCount: TransportConfig.uiPeerPaletteSlots,
