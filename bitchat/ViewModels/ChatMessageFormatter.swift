@@ -9,11 +9,17 @@ final class ChatMessageFormatter {
     private unowned let viewModel: ChatViewModel
     private let meshPalette = MinimalDistancePalette(config: .mesh)
     private let nostrPalette = MinimalDistancePalette(config: .nostr)
+    /// Greyscale twins used under the matrix theme, kept as separate
+    /// instances so switching themes never rebuilds either cache.
+    private let meshPaletteMono = MinimalDistancePalette(config: .meshMonochrome)
+    private let nostrPaletteMono = MinimalDistancePalette(config: .nostrMonochrome)
     /// What the Nostr palette was last built from. Colors are looked up once
     /// per people-sheet row and per formatted geochat message, so the palette
     /// is rebuilt only when the roster's membership (or our own excluded
     /// key) changes rather than recomputing the roster on every lookup.
     private var nostrPaletteKey: NostrPaletteKey?
+    /// Greyscale twin of the key above, guarding the mono palette rebuild.
+    private var nostrPaletteKeyMono: NostrPaletteKey?
 
     private struct NostrPaletteKey: Equatable {
         // periphery:ignore - read only via the synthesized Equatable
@@ -524,7 +530,7 @@ private extension ChatMessageFormatter {
                 return getPeerPaletteColor(for: PeerID(str: spid.id.lowercased()), isDark: isDark)
             }
         }
-        return Color(peerSeed: message.sender.lowercased(), isDark: isDark)
+        return Color(peerSeed: message.sender.lowercased(), isDark: isDark, monochrome: viewModel.currentTheme == .matrix)
     }
 
     func meshSeed(for peerID: PeerID) -> String {
@@ -535,15 +541,17 @@ private extension ChatMessageFormatter {
     }
 
     func getPeerPaletteColor(for peerID: PeerID, isDark: Bool) -> Color {
+        let mono = viewModel.currentTheme == .matrix
         if peerID == viewModel.meshService.myPeerID {
-            return .orange
+            return selfColor(theme: viewModel.currentTheme, isDark: isDark)
         }
 
-        meshPalette.ensurePalette(for: currentMeshPaletteSeeds())
-        if let color = meshPalette.color(for: peerID.id, isDark: isDark) {
+        let palette = mono ? meshPaletteMono : meshPalette
+        palette.ensurePalette(for: currentMeshPaletteSeeds())
+        if let color = palette.color(for: peerID.id, isDark: isDark) {
             return color
         }
-        return Color(peerSeed: meshSeed(for: peerID), isDark: isDark)
+        return Color(peerSeed: meshSeed(for: peerID), isDark: isDark, monochrome: mono)
     }
 
     func currentMeshPaletteSeeds() -> [String: String] {
@@ -556,16 +564,24 @@ private extension ChatMessageFormatter {
     }
 
     func getNostrPaletteColor(for pubkeyHexLowercased: String, isDark: Bool) -> Color {
+        let mono = viewModel.currentTheme == .matrix
         let myHex = currentGeohashIdentityHex()
         if let myHex, pubkeyHexLowercased == myHex {
-            return .orange
+            return selfColor(theme: viewModel.currentTheme, isDark: isDark)
         }
 
-        ensureNostrPalette(excluding: myHex)
-        if let color = nostrPalette.color(for: pubkeyHexLowercased, isDark: isDark) {
-            return color
+        if mono {
+            ensureNostrPaletteMono(excluding: myHex)
+            if let color = nostrPaletteMono.color(for: pubkeyHexLowercased, isDark: isDark) {
+                return color
+            }
+        } else {
+            ensureNostrPalette(excluding: myHex)
+            if let color = nostrPalette.color(for: pubkeyHexLowercased, isDark: isDark) {
+                return color
+            }
         }
-        return Color(peerSeed: "nostr:" + pubkeyHexLowercased, isDark: isDark)
+        return Color(peerSeed: "nostr:" + pubkeyHexLowercased, isDark: isDark, monochrome: mono)
     }
 
     /// Seeds the palette from the tracker's published roster, and only when
@@ -586,6 +602,25 @@ private extension ChatMessageFormatter {
             seeds[person.id] = "nostr:" + person.id
         }
         nostrPalette.ensurePalette(for: seeds)
+    }
+
+    /// Mono twin of `ensureNostrPalette`, feeding the greyscale palette its
+    /// own copy of the roster so the two never share a rebuild key.
+    func ensureNostrPaletteMono(excluding myHex: String?) {
+        let tracker = viewModel.participantTracker
+        let key = NostrPaletteKey(
+            membershipRevision: tracker.visibleMembershipRevision,
+            excludedHex: myHex
+        )
+        guard key != nostrPaletteKeyMono else { return }
+        nostrPaletteKeyMono = key
+
+        var seeds: [String: String] = [:]
+        let excluded = myHex ?? ""
+        for person in tracker.visiblePeople where person.id != excluded {
+            seeds[person.id] = "nostr:" + person.id
+        }
+        nostrPaletteMono.ensurePalette(for: seeds)
     }
 
     func currentGeohashIdentityHex() -> String? {
