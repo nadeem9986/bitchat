@@ -11,12 +11,23 @@ import SwiftUI
 extension Color {
     private static var peerColorCache: [String: Color] = [:]
     
-    init(peerSeed: String, isDark: Bool) {
-        let cacheKey = peerSeed + (isDark ? "|dark" : "|light")
+    init(peerSeed: String, isDark: Bool, monochrome: Bool = false) {
+        let cacheKey = peerSeed + (isDark ? "|dark" : "|light") + (monochrome ? "|mono" : "")
         if let cached = Self.peerColorCache[cacheKey] {
             self = cached
         }
         let h = peerSeed.djb2()
+        if monochrome {
+            // Same seed, hue removed: a stable grey per peer, bright enough
+            // to read on the theme's flat background.
+            let t = Double((h >> 17) & 0x3FF) / 1023.0
+            let hi = isDark ? 0.88 : 0.42
+            let lo = isDark ? 0.45 : 0.06
+            let c = Color(white: hi - (hi - lo) * t)
+            Self.peerColorCache[cacheKey] = c
+            self = c
+            return
+        }
         var hue = Double(h % 1000) / 1000.0
         let orange = 30.0 / 360.0
         if abs(hue - orange) < TransportConfig.uiColorHueAvoidanceDelta {
