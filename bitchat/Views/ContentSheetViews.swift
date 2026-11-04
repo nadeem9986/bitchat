@@ -731,7 +731,7 @@ private struct ContentPrivateHeaderInfoButton: View {
                     case .nostrAvailable:
                         Image(systemName: "globe")
                             .font(.bitchatSystem(size: 14))
-                            .foregroundColor(.purple)
+                            .foregroundColor(palette.statusRelay)
                             .accessibilityLabel(String(localized: "content.accessibility.available_nostr", comment: "Accessibility label for Nostr-available peer indicator"))
                     case .offline:
                         // Slashed variant of the connected glyph — offline as
