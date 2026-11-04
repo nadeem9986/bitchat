@@ -57,7 +57,7 @@ struct MeshPeerList: View {
                     let isMe = peer.isMe
                     HStack(spacing: 4) {
                         let assigned = peerListModel.colorForMeshPeer(id: peer.peerID, isDark: colorScheme == .dark)
-                        let baseColor = isMe ? Color.orange : assigned
+                        let baseColor = isMe ? palette.statusSelf : assigned
                         // Mesh rows keep their leading glyph: unlike the
                         // homogeneous bridge/groups sections, it encodes HOW
                         // the peer is reachable (radio, relayed, nostr-only).
@@ -81,7 +81,7 @@ struct MeshPeerList: View {
                             // Mutual favorite reachable via Nostr: globe icon (purple)
                             Image(systemName: "globe")
                                 .font(.bitchatSystem(size: 10))
-                                .foregroundColor(.purple)
+                                .foregroundColor(palette.statusRelay)
                                 .help(Strings.nostr)
                         } else {
                             // Offline: slashed variant of the connected glyph
@@ -100,7 +100,7 @@ struct MeshPeerList: View {
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                             if !suffix.isEmpty {
-                                let suffixColor = isMe ? Color.orange.opacity(0.6) : baseColor.opacity(0.6)
+                                let suffixColor = baseColor.opacity(0.6)
                                 Text(suffix)
                                     .bitchatFont(size: 14)
                                     .foregroundColor(suffixColor)
@@ -157,7 +157,7 @@ struct MeshPeerList: View {
                         if peer.hasUnread {
                             Image(systemName: "envelope.fill")
                                 .font(.bitchatSystem(size: 10))
-                                .foregroundColor(.orange)
+                                .foregroundColor(palette.statusUnread)
                                 .help(Strings.newMessagesTooltip)
                         }
 
@@ -165,7 +165,7 @@ struct MeshPeerList: View {
                             Button(action: { onToggleFavorite(peer.peerID) }) {
                                 Image(systemName: peer.isFavorite ? "star.fill" : "star")
                                     .font(.bitchatSystem(size: 12))
-                                    .foregroundColor(peer.isFavorite ? .yellow : palette.secondary)
+                                    .foregroundColor(peer.isFavorite ? palette.statusFavorite : palette.secondary)
                                     // Widen the tap target beyond the bare glyph;
                                     // height stays row-bound so neighboring rows
                                     // keep their own taps.
