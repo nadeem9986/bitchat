@@ -86,6 +86,12 @@ struct ThemePalette {
     let statusInfo: Color
     /// Favorite/star marker.
     let statusFavorite: Color
+    /// Own-user marker (your name, handle and leading glyph in people lists).
+    let statusSelf: Color
+    /// Relayed/Nostr reachability glyph.
+    let statusRelay: Color
+    /// Unread-message indicator.
+    let statusUnread: Color
     /// Hairline separators.
     let divider: Color
 
@@ -105,6 +111,9 @@ struct ThemePalette {
             statusWarning: isDark ? Color(white: 0.60) : Color(white: 0.40),
             statusInfo: isDark ? Color(white: 0.80) : Color(white: 0.20),
             statusFavorite: isDark ? Color(white: 0.95) : Color(white: 0.05),
+            statusSelf: isDark ? Color(white: 0.95) : Color(white: 0.05),
+            statusRelay: isDark ? Color(white: 0.70) : Color(white: 0.30),
+            statusUnread: isDark ? Color(white: 0.85) : Color(white: 0.20),
             divider: isDark ? Color.white.opacity(0.12) : Color.black.opacity(0.08)
         )
     }
@@ -122,6 +131,9 @@ struct ThemePalette {
             statusWarning: .orange,
             statusInfo: .cyan,
             statusFavorite: .yellow,
+            statusSelf: .orange,
+            statusRelay: .purple,
+            statusUnread: .orange,
             divider: separator
         )
     }
