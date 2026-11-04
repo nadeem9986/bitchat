@@ -43,7 +43,7 @@ struct GroupChatList: View {
                         if group.isCreator {
                             Image(systemName: "crown.fill")
                                 .font(.bitchatSystem(size: 9))
-                                .foregroundColor(.yellow)
+                                .foregroundColor(palette.statusFavorite)
                                 .help(Strings.creator)
                         }
 
@@ -52,7 +52,7 @@ struct GroupChatList: View {
                         if group.hasUnread {
                             Image(systemName: "envelope.fill")
                                 .font(.bitchatSystem(size: 10))
-                                .foregroundColor(.orange)
+                                .foregroundColor(palette.statusUnread)
                                 .help(Strings.newMessagesTooltip)
                         }
                     }
