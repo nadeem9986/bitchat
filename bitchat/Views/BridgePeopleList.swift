@@ -54,7 +54,7 @@ struct BridgePeopleList: View {
             VStack(alignment: .leading, spacing: 0) {
                 PeopleSectionHeader(
                     icon: "network",
-                    iconColor: Color.cyan.opacity(0.9),
+                    iconColor: palette.statusInfo.opacity(0.9),
                     title: Strings.sectionTitle
                 )
 
