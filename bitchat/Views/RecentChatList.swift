@@ -61,7 +61,7 @@ struct RecentChatList: View {
                         if chat.hasUnread {
                             Image(systemName: "envelope.fill")
                                 .font(.bitchatSystem(size: 10))
-                                .foregroundColor(.orange)
+                                .foregroundColor(palette.statusUnread)
                                 .help(Strings.newMessagesTooltip)
                         }
                     }
