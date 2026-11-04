@@ -57,7 +57,7 @@ struct GeohashPeopleList: View, Equatable {
                     HStack(spacing: 4) {
                         let icon = person.isTeleported ? "face.dashed" : "mappin.and.ellipse"
                         let assignedColor = peerListModel.colorForGeohashPerson(id: person.id, isDark: colorScheme == .dark)
-                        let rowColor: Color = person.isMe ? .orange : assignedColor
+                        let rowColor: Color = person.isMe ? palette.statusSelf : assignedColor
                         Image(systemName: icon)
                             // Size 10 to match the mesh rows' leading glyphs —
                             // both lists share the sidebar.
@@ -74,7 +74,7 @@ struct GeohashPeopleList: View, Equatable {
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                             if !suffix.isEmpty {
-                                let suffixColor = person.isMe ? Color.orange.opacity(0.6) : rowColor.opacity(0.6)
+                                let suffixColor = rowColor.opacity(0.6)
                                 Text(suffix)
                                     .bitchatFont(size: 14)
                                     .foregroundColor(suffixColor)
