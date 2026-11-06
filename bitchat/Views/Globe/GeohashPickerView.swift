@@ -18,6 +18,7 @@ struct GeohashPickerView: View {
     @StateObject private var state: GlobeState
     @State private var world: GlobeWorldData?
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.appTheme) private var theme
     @ThemedPalette private var palette
 
     private enum Strings {
@@ -171,9 +172,47 @@ struct GeohashPickerView: View {
     // MARK: - Globe palette
 
     /// Fixed land/ocean tones shared with the Android picker; the accent follows the
-    /// theme's location color.
+    /// theme's location color. Under the matrix theme the surface tones go
+    /// monochrome too, keeping the same brightness steps but dropping the green.
     private var globeColors: GlobeColors {
         let accent = palette.locationAccent
+        if theme == .matrix {
+            if colorScheme == .dark {
+                let onSurface = Color(white: 0.961)
+                let onSurfaceVariant = Color(white: 0.63)
+                return GlobeColors(
+                    accent: accent,
+                    land: Color(white: 0.11),
+                    coastline: accent.opacity(0.45),
+                    border: onSurfaceVariant.opacity(0.5),
+                    oceanCenter: Color(white: 0.05),
+                    oceanEdge: Color(white: 0.015),
+                    atmosphere: accent,
+                    graticule: onSurface.opacity(0.055),
+                    grid: onSurfaceVariant.opacity(0.6),
+                    label: onSurfaceVariant,
+                    labelHalo: palette.background,
+                    star: onSurface
+                )
+            } else {
+                let onSurface = Color(white: 0.085)
+                let onSurfaceVariant = Color(white: 0.32)
+                return GlobeColors(
+                    accent: accent,
+                    land: Color(white: 0.78),
+                    coastline: accent.opacity(0.5),
+                    border: onSurfaceVariant.opacity(0.6),
+                    oceanCenter: Color(white: 0.93),
+                    oceanEdge: Color(white: 0.85),
+                    atmosphere: accent,
+                    graticule: onSurface.opacity(0.08),
+                    grid: onSurfaceVariant.opacity(0.7),
+                    label: onSurfaceVariant,
+                    labelHalo: palette.background,
+                    star: onSurfaceVariant
+                )
+            }
+        }
         if colorScheme == .dark {
             let onSurface = Color(red: 0.961, green: 0.961, blue: 0.961)
             let onSurfaceVariant = Color(red: 0.604, green: 0.651, blue: 0.604)
