@@ -248,7 +248,7 @@ struct ContentHeaderView: View {
                     let badgeColor: Color = {
                         switch locationChannelsModel.selectedChannel {
                         case .mesh:
-                            return Color(hue: 0.60, saturation: 0.85, brightness: 0.82)
+                            return palette.accentBlue
                         case .location:
                             return palette.locationAccent
                         }
