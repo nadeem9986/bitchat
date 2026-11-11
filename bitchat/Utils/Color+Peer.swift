@@ -15,6 +15,7 @@ extension Color {
         let cacheKey = peerSeed + (isDark ? "|dark" : "|light") + (monochrome ? "|mono" : "")
         if let cached = Self.peerColorCache[cacheKey] {
             self = cached
+            return
         }
         let h = peerSeed.djb2()
         if monochrome {
